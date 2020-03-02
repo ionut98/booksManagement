@@ -7,7 +7,8 @@ const Author = db.define(
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
+      autoIncrement: true
     },
     'First Name': {
       type: Sequelize.TEXT
@@ -18,7 +19,5 @@ const Author = db.define(
   },
   { timestamps: false }
 );
-
-Author.sync().then(() => console.log('done'));
 
 module.exports = Author;

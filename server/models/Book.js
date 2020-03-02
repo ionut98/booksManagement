@@ -4,7 +4,7 @@ const db = require('../config/database');
 const Book = db.define(
   'Book',
   {
-    id: {
+    ISBN: {
       type: Sequelize.TEXT,
       primaryKey: true,
       allowNull: false
@@ -24,7 +24,5 @@ const Book = db.define(
   },
   { timestamps: false }
 );
-
-Book.sync().then(() => console.log('done'));
 
 module.exports = Book;

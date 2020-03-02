@@ -1,6 +1,9 @@
 const Sequelize = require('sequelize');
 const db = require('../config/database');
 
+const Book = require('./Book');
+const Author = require('./Author');
+
 const Books_Authors = db.define(
   'Books_Authors',
   {
@@ -10,7 +13,8 @@ const Books_Authors = db.define(
       references: {
         model: Book,
         key: 'id'
-      }
+      },
+      primaryKey: true
     },
     AuthorId: {
       type: Sequelize.INTEGER,
@@ -18,7 +22,8 @@ const Books_Authors = db.define(
       references: {
         model: Author,
         key: 'id'
-      }
+      },
+      primaryKey: true
     }
   },
   { timestamps: false }

@@ -1,9 +1,21 @@
 const router = require('express').Router();
+const Book = require('../models/Book');
+
+// here are defined all the corresponding routes for /books
+
 /**
  * returning all the existing books in the db
  */
 router.get('/', (req, res) => {
-  res.send('NOT IMPLEMENTED');
+  Book.findAll()
+    .then(books => {
+      console.log(books);
+      console.log(`--------------------------------------------`);
+      res.send({
+        books: books
+      });
+    })
+    .catch(err => console.log(err));
 });
 /**
  * add a book in the db
