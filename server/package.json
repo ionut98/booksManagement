@@ -1,0 +1,14 @@
+{
+  "name": "serviciuweb",
+  "version": "1.0.0",
+  "description": "This server has to serve for the management of a library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ionut Cristian Mihoci",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
