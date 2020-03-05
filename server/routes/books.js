@@ -9,7 +9,7 @@ const Book = require('../models/Book');
 router.get('/', (req, res) => {
   Book.findAll()
     .then(books => {
-      console.log(books);
+      console.log(books.map(book => book.dataValues));
       console.log(`--------------------------------------------`);
       res.send({
         books: books

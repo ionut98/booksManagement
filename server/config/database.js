@@ -13,4 +13,4 @@ const db = new Sequelize('sqlite:../library.db', {
 //   .then(() => console.log('database connected...'))
 //   .catch(err => console.log('Error: ' + err));
 
-module.exports = db;
+module.exports = { db, Sequelize };

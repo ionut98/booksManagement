@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../config/database');
+const { db } = require('../config/database');
 
 const Author = db.define(
   'Author',
@@ -10,10 +10,10 @@ const Author = db.define(
       allowNull: false,
       autoIncrement: true
     },
-    'First Name': {
+    FirstName: {
       type: Sequelize.TEXT
     },
-    'Last Name': {
+    LastName: {
       type: Sequelize.TEXT
     }
   },
