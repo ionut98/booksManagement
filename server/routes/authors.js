@@ -1,6 +1,4 @@
 const router = require('express').Router();
-const Author = require('../models/Author');
-const { Sequelize } = require('../config/database');
 
 //routes for /authors
 

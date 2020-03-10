@@ -11,10 +11,12 @@ const Author = db.define(
       autoIncrement: true
     },
     FirstName: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      allowNull: false
     },
     LastName: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      allowNull: false
     }
   },
   { timestamps: false }

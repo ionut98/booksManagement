@@ -7,12 +7,12 @@ const Author = require('./Author');
 const Books_Authors = db.define(
   'Books_Authors',
   {
-    Book_ISBN: {
+    BookISBN: {
       type: Sequelize.NUMBER,
       allowNull: false,
       references: {
         model: Book,
-        key: 'id'
+        key: 'ISBN'
       },
       primaryKey: true
     },
@@ -28,5 +28,8 @@ const Books_Authors = db.define(
   },
   { timestamps: false }
 );
+
+Author.belongsToMany(Book, { through: 'Books_Authors' });
+Book.belongsToMany(Author, { through: 'Books_Authors' });
 
 module.exports = Books_Authors;

@@ -3,8 +3,8 @@ const Author = require('../../models/Author');
 /**
  * body payload =>
  * {
- *    "FirstName": "",
- *    "LastName": ""
+ *    "FirstName",
+ *    "LastName",
  * }
  */
 module.exports = (req, res) => {

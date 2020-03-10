@@ -7,10 +7,12 @@ const Book = db.define(
     ISBN: {
       type: Sequelize.TEXT,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     Name: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
+      allowNull: false
     },
     NrOfPages: {
       type: Sequelize.NUMBER

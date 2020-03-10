@@ -1,34 +1,19 @@
 const router = require('express').Router();
-const Book = require('../models/Book');
 
 // here are defined all the corresponding routes for /books
 
 /**
  * returning all the existing books in the db
  */
-router.get('/', (req, res) => {
-  Book.findAll()
-    .then(books => {
-      console.log(books.map(book => book.dataValues));
-      console.log(`--------------------------------------------`);
-      res.send({
-        books: books
-      });
-    })
-    .catch(err => console.log(err));
-});
+router.get('/', require('../controllers/bookController/getAllBooks'));
 /**
  * add a book in the db
  */
-router.post('/add', (req, res) => {
-  res.send('NOT IMPLEMENTED');
-});
+router.post('/add', require('../controllers/bookController/addBook'));
 /**
  * update an existing book in the db
  */
-router.put('/update', (req, res) => {
-  res.send('NOT IMPLEMENTED');
-});
+router.put('/update', require('../controllers/bookController/updateBook'));
 /**
  * delete a book from the db
  */
