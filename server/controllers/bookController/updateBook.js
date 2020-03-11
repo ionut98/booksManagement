@@ -1,54 +1,98 @@
-const Author = require('../../models/Author');
+const Book = require('../../models/Book');
+const Books_Authors = require('../../models/Books_Authors');
 
-/** body payload =>
- * {  "id": ""
- *    "FirstName": "",
- *    "LastName": ""
+/**
+ * body payload =>
+ * {
+ *  - "ISBN", -> obligatoriu
+ *  - daca exista 'book', se modifica parametrii existenti in cadrul obiectului
+ *     --"book": {
+ *          "Title",
+ *          "NrOfPages",
+ *          "Type",
+ *          "Description"
+ *        },
+ *  - daca exista 'authors', se modifica cu noua lista de id-uri
+ *      --"authors": [idAuthor1, idAuthor2, ...]
  * }
- * if one of the params is "" (empty string) then it will be replaced with the present value
  */
-module.exports = (req, res) => {
-  const {
-    body: { id, FirstName: newFirstName, LastName: newLastName }
-  } = req;
 
-  Author.findAll({
-    where: {
-      id: id
-    }
-  })
-    .then(author => {
-      Author.update(
-        {
-          FirstName: newFirstName ? newFirstName : author.FirstName,
-          LastName: newLastName ? newLastName : author.LastName
-        },
-        {
-          where: {
-            id: id
-          }
+const updateBook = (ISBN, book) => {
+  return new Promise(resolve => {
+    // check if there are any changes in book's parameters
+    if (book) {
+      Book.update(book, {
+        where: {
+          ISBN: ISBN
         }
-      )
+      })
         .then(result => {
-          res.send({
-            success: true,
-            updated: Boolean(result[0])
-          });
-          console.log(`--------------------------------------------`);
+          resolve(Boolean(result[0]));
         })
         .catch(err => {
-          console.log(err, 'at updating');
-          res.send({
-            success: false
-          });
+          console.log(err, 'at updating book');
           console.log(`--------------------------------------------`);
+          resolve(false);
         });
-    })
-    .catch(err => {
-      console.log(err, 'at finding the element at update');
-      res.send({
-        success: false
-      });
-      console.log(`--------------------------------------------`);
-    });
+    } else {
+      resolve(false);
+    }
+  });
+};
+
+const updateBooksAuthors = (ISBN, authors) => {
+  return new Promise(resolve => {
+    // check if there are any changes in authors list
+    if (authors && authors.length) {
+      Books_Authors.destroy({
+        where: {
+          BookISBN: ISBN
+        }
+      })
+        .then(() => {
+          Books_Authors.bulkCreate(
+            authors.map(authorId => ({
+              BookISBN: ISBN,
+              AuthorId: authorId
+            }))
+          )
+            .then(() => {
+              resolve(true);
+            })
+            .catch(err => {
+              console.log(
+                err,
+                `at adding the new BooksAuthors records at updating book's authors`
+              );
+              console.log(`--------------------------------------------`);
+              resolve(false);
+            });
+        })
+        .catch(err => {
+          console.log(
+            err,
+            `at deleting existing BooksAuthors records at updating book's authors`
+          );
+          console.log(`--------------------------------------------`);
+          resolve(false);
+        });
+    } else {
+      resolve(false);
+    }
+  });
+};
+
+module.exports = async (req, res) => {
+  const {
+    body: { ISBN, book, authors }
+  } = req;
+
+  let updatedBook = await updateBook(ISBN, book);
+  let updatedBooksAuthors = await updateBooksAuthors(ISBN, authors);
+
+  res.send({
+    success: true,
+    updatedBook: updatedBook,
+    updatedBooksAuthors: updatedBooksAuthors
+  });
 };

@@ -37,7 +37,7 @@ module.exports = (req, res) => {
           console.log(`--------------------------------------------`);
         })
         .catch(err => {
-          console.log(err, 'at updating');
+          console.log(err, 'at updating author');
           res.send({
             success: false
           });
@@ -45,7 +45,7 @@ module.exports = (req, res) => {
         });
     })
     .catch(err => {
-      console.log(err, 'at finding the element at update');
+      console.log(err, 'at finding the element at updating author');
       res.send({
         success: false
       });

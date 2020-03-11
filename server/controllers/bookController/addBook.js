@@ -6,7 +6,7 @@ const Books_Authors = require('../../models/Books_Authors');
  * {
  *    "book": {
  *            "ISBN",
- *            "Name",
+ *            "Title",
  *            "NrOfPages",
  *            "Type",
  *            "Description"
@@ -25,11 +25,20 @@ module.exports = (req, res) => {
           BookISBN: book.ISBN,
           AuthorId: authorId
         }))
-      );
-      res.send({
-        success: true
-      });
-      console.log(`--------------------------------------------`);
+      )
+        .then(() => {
+          res.send({
+            success: true
+          });
+          console.log(`--------------------------------------------`);
+        })
+        .catch(err => {
+          console.log(err, 'at adding book');
+          res.send({
+            success: false
+          });
+          console.log(`--------------------------------------------`);
+        });
     })
     .catch(err => {
       console.log(err);

@@ -10,7 +10,7 @@ const Book = db.define(
       allowNull: false,
       unique: true
     },
-    Name: {
+    Title: {
       type: Sequelize.TEXT,
       allowNull: false
     },

@@ -11,7 +11,7 @@ module.exports = (req, res) => {
       console.log(`--------------------------------------------`);
       res.send({
         success: true,
-        authors: result
+        books: result
       });
     })
     .catch(err => {

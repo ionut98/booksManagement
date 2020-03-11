@@ -17,14 +17,13 @@ router.put('/update', require('../controllers/bookController/updateBook'));
 /**
  * delete a book from the db
  */
-router.delete('/delete', (req, res) => {
-  res.send('NOT IMPLEMENTED');
-});
+router.delete('/delete', require('../controllers/bookController/deleteBook'));
 /**
  * filter the books from the db by title
  */
-router.get('/filter-by-title', (req, res) => {
-  res.send('NOT IMPLEMENTED');
-});
+router.get(
+  '/filter-by-title',
+  require('../controllers/bookController/filterBooks')
+);
 
 module.exports = router;
