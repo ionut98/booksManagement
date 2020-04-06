@@ -44,5 +44,18 @@ class BooksService:
 
     def get_books(self, keyword):
         response = requests.get(
-             self.__url + 'filter-by-title?keyword={keyword}'.format(keyword=keyword))
-        return response.json()
+            self.__url + 'filter-by-title?keyword={keyword}'.format(keyword=keyword))
+
+        parsed_response = response.json()
+        books = parsed_response["books"]
+
+        books_string = "\nISBN   Titlu   NrPagini   Tip   Descriere   Autori\n"
+        books_string += "---------------------------------------------------\n"
+        for book in books:
+            books_string += "[" + str(book["ISBN"]) + "] | " + book["Title"] + " | " + str(book["NrOfPages"]) + " | " + \
+                            book["Type"] + " | " + book["Description"] + " | "
+            for author in book["Authors"]:
+                books_string += author["FirstName"] + "-" + author["LastName"] + " "
+            books_string += "\n"
+        books_string += "---------------------------------------------------\n"
+        return books_string

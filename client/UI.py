@@ -3,8 +3,11 @@ from services.AuthorsService import AuthorsService
 
 
 class Console:
-    authors_service = AuthorsService("http://localhost:30401/authors/")
-    books_service = BooksService("http://localhost:30401/books/")
+    host = "192.168.0.220"
+    port = "30401"
+
+    authors_service = AuthorsService("http://{host}:{port}/authors/".format(host=host, port=port))
+    books_service = BooksService("http://{host}:{port}/books/".format(host=host, port=port))
 
     def run(self):
 
@@ -19,7 +22,7 @@ class Console:
             if main_option.lower() == "exit":
                 break
             elif main_option.lower() not in main_options:
-                print("Optiune invalida!")
+                print("Optiune invalida!\n")
             main_options[main_option.lower()]()
 
     def show_authors_options(self):
@@ -39,7 +42,7 @@ class Console:
             elif authors_option.lower() in authors_options:
                 authors_options[authors_option.lower()]()
             else:
-                print("Optiune invalida, alegeti dintre cele doua!")
+                print("Optiune invalida, alegeti dintre cele existente!\n")
 
     def show_books_options(self):
         books_options = {
@@ -58,7 +61,7 @@ class Console:
             elif books_option.lower() in books_options:
                 books_options[books_option.lower()]()
             else:
-                print("Optiune invalida, alegeti dintre cele doua!")
+                print("Optiune invalida, alegeti dintre cele existente!\n")
 
     def show_all_authors(self):
         print(self.authors_service.get_authors(""))

@@ -39,4 +39,13 @@ class AuthorsService:
     def get_authors(self, keyword):
         response = requests.get(
             self.__url + 'filter-by-name?keyword={keyword}'.format(keyword=keyword))
-        return response.json()
+        parsed_response = response.json()
+        authors = parsed_response["authors"]
+
+        authors_string = "\nID   Prenume   Nume\n"
+        authors_string += "------------------\n"
+        for author in authors:
+            authors_string += "[" + str(author["id"]) + "] " + author["FirstName"] + " " + author["LastName"] + "\n"
+        authors_string += "------------------\n"
+
+        return authors_string
