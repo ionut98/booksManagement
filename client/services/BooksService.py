@@ -26,10 +26,21 @@ class BooksService:
         data = {
             "ISBN": ISBN
         }
-        print(data)
         response = requests.delete(
             self.__url + 'delete', json=data)
-        return response.json()
+
+        parsed_response = response.json()
+
+        result_string = "\n------------------"
+
+        if parsed_response["success"] and parsed_response["deletedBook"]:
+            result_string += "\nOperatie realizata!\n"
+
+        if parsed_response["success"] and parsed_response["deletedBook"] is False:
+            result_string += "\nNimic de sters!\n"
+
+        result_string += "------------------\n"
+        return result_string
 
     def update_book(self, ISBN, book, new_book_authors_ids_list):
         data = {
@@ -51,6 +62,10 @@ class BooksService:
 
         books_string = "\nISBN   Titlu   NrPagini   Tip   Descriere   Autori\n"
         books_string += "---------------------------------------------------\n"
+
+        if len(books) == 0:
+            books_string += "Fara rezultate \n"
+
         for book in books:
             books_string += "[" + str(book["ISBN"]) + "] | " + book["Title"] + " | " + str(book["NrOfPages"]) + " | " + \
                             book["Type"] + " | " + book["Description"] + " | "

@@ -1,6 +1,9 @@
 from services.BooksService import BooksService
 from services.AuthorsService import AuthorsService
 
+from models.Author import Author
+from models.Book import Book
+
 
 class Console:
     host = "192.168.0.220"
@@ -47,10 +50,10 @@ class Console:
     def show_books_options(self):
         books_options = {
             'afiseaza': self.show_all_books,
-            'add': self.add_books,
-            'update': self.update_books,
-            'delete': self.delete_books,
-            'filter': self.filter_books
+            'adauga': self.add_books,
+            'modifica': self.update_books,
+            'sterge': self.delete_books,
+            'filtreaza': self.filter_books
         }
         while True:
             print("-->Afiseaza\n-->Adauga\n-->Modifica\n-->Sterge\n-->Filtreaza\n-->Revenire\n")
@@ -69,26 +72,68 @@ class Console:
     def show_all_books(self):
         print(self.books_service.get_books(""))
 
+    def filter_authors(self):
+        keyword = input("\n Filtrati dupa nume: ")
+        print(self.authors_service.get_authors(keyword))
+
+    def filter_books(self):
+        keyword = input("\n Filtrati dupa titlu: ")
+        print(self.books_service.get_books(keyword))
+
+    def delete_authors(self):
+        print(self.authors_service.get_authors(""))
+        idAuthor = input("Introduceti id-ul autorului de sters: ")
+        print(self.authors_service.delete_author(idAuthor))
+        print(self.authors_service.get_authors(""))
+
+    def delete_books(self):
+        print(self.books_service.get_books(""))
+        ISBNBook = input("Introduceti ISBN-ul cartii de sters: ")
+        print(self.books_service.delete_book(ISBNBook))
+        print(self.books_service.get_books(""))
+
+    def add_authors(self):
+        print(self.authors_service.get_authors(""))
+        authorFirstName = input("Introduceti prenumele autorului: ")
+        authorLastName = input("Introduceti numele autorului: ")
+
+        if len(authorLastName) == 0 or len(authorFirstName) == 0:
+            print("\nNumele si prenumele trebuie sa fie nevide!\n")
+            return
+
+        print(self.authors_service.add_author(Author(authorFirstName, authorLastName)))
+        print(self.authors_service.get_authors(""))
+
     def add_books(self):
-        pass
+
+        # data = {
+        #             "book": {
+        #                 "ISBN": new_book.isbn,
+        #                 "Title": new_book.title,
+        #                 "NrOfPages": new_book.nr_of_pages,
+        #                 "Type": new_book.type,
+        #                 "Description": new_book.description
+        #             },
+        #             "authors": new_book_authors_ids_list
+        #         }
+        print(self.authors_service.get_authors(""))
+        bookISBN = input("Introduceti ISBN-ul cartii: ")
+        bookTitle = input("Introduceti titlul cartii: ")
+        bookNrOfPages = input("Introduceti nr de pagini al cartii: ")
+        bookType = input("Introduceti tipul cartii: ")
+        bookDescription = input("Introduceti descrierea cartii: ")
+        bookAuthors = input("Introduceti id-urile autorilor cartii: ")
+
+        if len(authorLastName) == 0 or len(authorFirstName) == 0:
+            print("\nNumele si prenumele trebuie sa fie nevide!\n")
+            return
+
+        print(self.authors_service.add_author(Author(authorFirstName, authorLastName)))
+        print(self.authors_service.get_authors(""))
+
 
     def update_books(self):
         pass
 
-    def delete_books(self):
-        pass
-
-    def filter_books(self):
-        pass
-
-    def add_authors(self):
-        pass
-
     def update_authors(self):
-        pass
-
-    def delete_authors(self):
-        pass
-
-    def filter_authors(self):
         pass

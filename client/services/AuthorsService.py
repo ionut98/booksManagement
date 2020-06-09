@@ -11,19 +11,44 @@ class AuthorsService:
             "FirstName": new_author.first_name,
             "LastName": new_author.last_name
         }
-        print(data)
         response = requests.post(
             self.__url + 'add', json=data)
-        return response.json()
+
+        parsed_response = response.json()
+
+        result_string = "\n------------------"
+
+        if parsed_response["success"]:
+            result_string += "\nOperatie realizata!\n"
+
+        else:
+            result_string += "\nOperatie esuata!\n"
+
+        result_string += "------------------\n"
+        return result_string
 
     def delete_author(self, author_id):
         data = {
             "id": author_id,
         }
-        print(data)
         response = requests.delete(
             self.__url + 'delete', json=data)
-        return response.json()
+
+        parsed_response = response.json()
+
+        result_string = "\n------------------"
+
+        if parsed_response["success"] and parsed_response["deleted"]:
+            result_string += "\nOperatie realizata!\n"
+
+        elif parsed_response["success"] and parsed_response["deleted"] is False:
+            result_string += "\nNimic de sters!\n"
+
+        else:
+            result_string += "\nOperatie esuata!\n"
+
+        result_string += "------------------\n"
+        return result_string
 
     def update_author(self, author_id, author):
         data = {
@@ -44,6 +69,10 @@ class AuthorsService:
 
         authors_string = "\nID   Prenume   Nume\n"
         authors_string += "------------------\n"
+
+        if len(authors) == 0:
+            authors_string += "Fara rezultate \n"
+
         for author in authors:
             authors_string += "[" + str(author["id"]) + "] " + author["FirstName"] + " " + author["LastName"] + "\n"
         authors_string += "------------------\n"
