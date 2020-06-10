@@ -32,10 +32,15 @@ class BooksService:
 
         return parsed_response
 
-    def update_book(self, isbn, book, new_book_authors_ids_list):
+    def update_book(self, book, new_book_authors_ids_list):
         data = {
-            "ISBN": isbn,
-            "book": book,
+            "ISBN": book.isbn,
+            "book": {
+                "Title": book.title,
+                "NrOfPages": book.nr_of_pages,
+                "Type": book.type,
+                "Description": book.description,
+            },
             "authors": new_book_authors_ids_list
         }
         print(data)

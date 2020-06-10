@@ -35,7 +35,6 @@ class AuthorsService:
             "FirstName": author.first_name,
             "LastName": author.last_name,
         }
-        print(data)
         response = requests.put(
             self.__url + 'update', json=data)
         return response.json()

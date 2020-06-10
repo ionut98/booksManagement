@@ -25,8 +25,57 @@ class Console:
             if main_option.lower() == "exit":
                 break
             elif main_option.lower() not in main_options:
-                print("Optiune invalida!\n")
-            main_options[main_option.lower()]()
+                print("\nOptiune invalida!\n")
+            else:
+                main_options[main_option.lower()]()
+
+    @staticmethod
+    def validate_book_inputs(authors):
+        book_title = input("Introduceti titlul cartii: ")
+        if len(book_title) == 0:
+            print('\nTitlul cartii trebuie sa fie nevid!\n')
+            return
+
+        book_nr_of_pages = input("Introduceti nr de pagini al cartii: ")
+        try:
+            book_nr_of_pages = int(book_nr_of_pages)
+            if book_nr_of_pages < 0:
+                print('\nIntroduceti un nr valid de pagini!\n')
+                return
+        except ValueError:
+            print('\nIntroduceti un nr valid de pagini!\n')
+            return
+
+        book_type = input("Introduceti tipul cartii: ")
+        book_description = input("Introduceti descrierea cartii: ")
+        book_authors = input("Introduceti id-urile autorilor cartii: (separate prin virgula): ")
+
+        try:
+            book_authors = book_authors.split(",")
+
+            non_existent_authors = ""
+            for author_id in book_authors:
+                if int(author_id) not in [author['id'] for author in authors]:
+                    non_existent_authors += author_id + ' '
+
+            if non_existent_authors != "":
+                print("\nId-urile: {ids}nu exista".format(ids=non_existent_authors))
+                print("Va rugam sa adaugati, mai intai, autorul/autorii inexistent(i)!\n")
+                return
+
+        except ValueError:
+            print('\nValorile introduse sunt eronate!\n')
+            return
+
+        validated_inputs = {
+            "book_title": book_title,
+            "book_nr_of_pages": book_nr_of_pages,
+            "book_authors": book_authors,
+            "book_type": book_type,
+            "book_description": book_description
+        }
+
+        return validated_inputs
 
     def show_authors_options(self):
         authors_options = {
@@ -199,7 +248,7 @@ class Console:
         self.show_all_books()
 
         authors = self.authors_service.get_authors("")
-        print('\nLista autori: ')
+        print('\nLista Autori: ')
         self.show_all_authors()
 
         book_isbn = input("Introduceti ISBN-ul cartii: ")
@@ -207,55 +256,18 @@ class Console:
             print('\nISBN deja existent!\n')
             return
 
-        book_title = input("Introduceti titlul cartii: ")
-        if len(book_title) == 0:
-            print('\nTitlul cartii trebuie sa fie nevid!\n')
-            return
-
-        book_nr_of_pages = input("Introduceti nr de pagini al cartii: ")
-        try:
-            book_nr_of_pages = int(book_nr_of_pages)
-            if book_nr_of_pages < 0:
-                print('\nIntroduceti un nr valid de pagini!\n')
-                return
-        except ValueError:
-            print('\nIntroduceti un nr valid de pagini!\n')
-            return
-
-        if len(book_title) == 0:
-            print('\nTitlul cartii trebuie sa fie nevid!\n')
-            return
-
-        book_type = input("Introduceti tipul cartii: ")
-        book_description = input("Introduceti descrierea cartii: ")
-        book_authors = input("Introduceti id-urile autorilor cartii: (separate prin virgula): ")
-
-        try:
-            book_authors = book_authors.split(",")
-
-            non_existent_authors = ""
-            for author_id in book_authors:
-                if int(author_id) not in [author['id'] for author in authors]:
-                    non_existent_authors += author_id + ' '
-
-            if non_existent_authors != "":
-                print("\nId-urile: {ids}nu exista".format(ids=non_existent_authors))
-                print("Va rugam sa adaugati, mai intai, autorul inexistent!\n")
-                return
-
-        except ValueError:
-            print('\nValorile introduse sunt eronate!\n')
-            return
+        # extracted this method because of the similarity between add_books and update_books
+        validated_inputs = self.validate_book_inputs(authors)
 
         result = self.books_service.add_book(
             Book(
                 book_isbn,
-                book_title,
-                book_nr_of_pages,
-                book_type,
-                book_description
+                validated_inputs['book_title'],
+                validated_inputs['book_nr_of_pages'],
+                validated_inputs['book_type'],
+                validated_inputs['book_description']
             ),
-            book_authors
+            validated_inputs['book_authors']
         )
 
         if result['success'] is False:
@@ -268,7 +280,70 @@ class Console:
         self.show_all_books()
 
     def update_books(self):
-        pass
+        authors = self.authors_service.get_authors("")
+        print('\nLista Autori: ')
+        self.show_all_authors()
+
+        books = self.books_service.get_books("")
+        print('\nLista Carti: ')
+        self.show_all_books()
+
+        book_isbn = input("Introduceti ISBN-ul cartii: ")
+        if book_isbn not in [book['ISBN'] for book in books]:
+            print('\nISBN inexistent!\n')
+            return
+
+        validated_inputs = self.validate_book_inputs(authors)
+
+        result = self.books_service.update_book(
+            Book(
+                book_isbn,
+                validated_inputs['book_title'],
+                validated_inputs['book_nr_of_pages'],
+                validated_inputs['book_type'],
+                validated_inputs['book_description']
+            ),
+            validated_inputs['book_authors']
+        )
+
+        if result['success'] is False:
+            print('\nOperatie esuata')
+            return
+
+        if result['success']:
+            print('\nOperatie efectuata cu succes!')
+
+        self.show_all_books()
 
     def update_authors(self):
-        pass
+        self.show_all_authors()
+        author_id = input("Introduceti id-ul autorului: ")
+        authors = self.authors_service.get_authors("")
+
+        # validare existenta id autor
+        try:
+            if int(author_id) not in [author['id'] for author in authors]:
+                print('\nId autor inexistent!\n')
+                return
+        except ValueError:
+            print('\nId-ul introdus este invalid\n')
+            return
+
+        author_first_name = input("Introduceti prenumele autorului: ")
+        author_last_name = input("Introduceti numele autorului: ")
+
+        if len(author_last_name) == 0 or len(author_first_name) == 0:
+            print("\nNumele si prenumele trebuie sa fie nevide!\n")
+            return
+
+        result = self.authors_service.update_author(author_id, Author(author_first_name, author_last_name))
+        result_string = "\n------------------"
+
+        if result["success"] and result["updated"]:
+            result_string += "\nOperatie realizata!\n"
+        else:
+            result_string += "\nOperatie esuata!\n"
+
+        result_string += "------------------\n"
+        print(result_string)
+        self.show_all_authors()
