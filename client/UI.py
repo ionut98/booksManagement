@@ -6,7 +6,8 @@ from models.Book import Book
 
 
 class Console:
-    host = "192.168.62.221"  # munca
+    # host = "192.168.62.221"  # munca
+    host = "192.168.0.157"  # acasa
     port = "30401"
 
     authors_service = AuthorsService("http://{host}:{port}/authors/".format(host=host, port=port))
@@ -34,17 +35,17 @@ class Console:
         book_title = input("Introduceti titlul cartii: ")
         if len(book_title) == 0:
             print('\nTitlul cartii trebuie sa fie nevid!\n')
-            return
+            return None
 
         book_nr_of_pages = input("Introduceti nr de pagini al cartii: ")
         try:
             book_nr_of_pages = int(book_nr_of_pages)
             if book_nr_of_pages < 0:
                 print('\nIntroduceti un nr valid de pagini!\n')
-                return
+                return None
         except ValueError:
             print('\nIntroduceti un nr valid de pagini!\n')
-            return
+            return None
 
         book_type = input("Introduceti tipul cartii: ")
         book_description = input("Introduceti descrierea cartii: ")
@@ -61,11 +62,11 @@ class Console:
             if non_existent_authors != "":
                 print("\nId-urile: {ids}nu exista".format(ids=non_existent_authors))
                 print("Va rugam sa adaugati, mai intai, autorul/autorii inexistent(i)!\n")
-                return
+                return None
 
         except ValueError:
             print('\nValorile introduse sunt eronate!\n')
-            return
+            return None
 
         validated_inputs = {
             "book_title": book_title,
@@ -76,6 +77,24 @@ class Console:
         }
 
         return validated_inputs
+
+    @staticmethod
+    def print_books(books):
+        books_string = "\nISBN   Titlu   NrPagini   Tip   Descriere   Autori\n"
+        books_string += "---------------------------------------------------\n"
+
+        if len(books) == 0:
+            books_string += "Fara rezultate \n"
+
+        for book in books:
+            books_string += "[" + str(book["ISBN"]) + "] | " + book["Title"] + " | " + str(book["NrOfPages"]) + " | " + \
+                            book["Type"] + " | " + book["Description"] + " | "
+            for author in book["Authors"]:
+                books_string += author["FirstName"] + "-" + author["LastName"] + " "
+            books_string += "\n"
+        books_string += "---------------------------------------------------\n"
+
+        print(books_string)
 
     def show_authors_options(self):
         authors_options = {
@@ -132,21 +151,7 @@ class Console:
 
     def show_all_books(self):
         books = self.books_service.get_books("")
-        books_string = "\nISBN   Titlu   NrPagini   Tip   Descriere   Autori\n"
-        books_string += "---------------------------------------------------\n"
-
-        if len(books) == 0:
-            books_string += "Fara rezultate \n"
-
-        for book in books:
-            books_string += "[" + str(book["ISBN"]) + "] | " + book["Title"] + " | " + str(book["NrOfPages"]) + " | " + \
-                            book["Type"] + " | " + book["Description"] + " | "
-            for author in book["Authors"]:
-                books_string += author["FirstName"] + "-" + author["LastName"] + " "
-            books_string += "\n"
-        books_string += "---------------------------------------------------\n"
-
-        print(books_string)
+        self.print_books(books)
 
     def filter_authors(self):
         keyword = input("\n Filtrati dupa nume: ")
@@ -167,21 +172,7 @@ class Console:
     def filter_books(self):
         keyword = input("\n Filtrati dupa titlu: ")
         books = self.books_service.get_books(keyword)
-        books_string = "\nISBN   Titlu   NrPagini   Tip   Descriere   Autori\n"
-        books_string += "---------------------------------------------------\n"
-
-        if len(books) == 0:
-            books_string += "Fara rezultate \n"
-
-        for book in books:
-            books_string += "[" + str(book["ISBN"]) + "] | " + book["Title"] + " | " + str(book["NrOfPages"]) + " | " + \
-                            book["Type"] + " | " + book["Description"] + " | "
-            for author in book["Authors"]:
-                books_string += author["FirstName"] + "-" + author["LastName"] + " "
-            books_string += "\n"
-        books_string += "---------------------------------------------------\n"
-
-        print(books_string)
+        self.print_books(books)
 
     def delete_authors(self):
         self.show_all_authors()
@@ -258,6 +249,8 @@ class Console:
 
         # extracted this method because of the similarity between add_books and update_books
         validated_inputs = self.validate_book_inputs(authors)
+        if validated_inputs is None:
+            return
 
         result = self.books_service.add_book(
             Book(
@@ -294,6 +287,8 @@ class Console:
             return
 
         validated_inputs = self.validate_book_inputs(authors)
+        if validated_inputs is None:
+            return
 
         result = self.books_service.update_book(
             Book(

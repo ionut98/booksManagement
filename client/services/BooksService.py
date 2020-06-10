@@ -43,7 +43,6 @@ class BooksService:
             },
             "authors": new_book_authors_ids_list
         }
-        print(data)
         response = requests.put(
             self.__url + 'update', json=data)
 
